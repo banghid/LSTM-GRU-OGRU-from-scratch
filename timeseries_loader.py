@@ -48,22 +48,26 @@ class TimeseriesLoader(object):
 
         return np.array(Xs), np.array(Ys)
     
-    # def create_batches(self, x, y, batch_size=100):
-    #     Xs = []
-    #     Ys = []
-    #     for i in range(batch_size):
-    #         Xs.append(x[i])
-
-    #     return np.array(Xs), np.array(Ys)
-
     def create_batches(self, x, y, batch_size=100):
-        perm = np.random.permutation(len(x))
-        print('perm value:', perm)
-        x = x[perm]
-        y = y[perm]
+        Xs = []
+        Ys = []
+        n = len(x)/batch_size
+        print("n value is:", n)
+        
+        for i in range(int(n)):
+            Xs.append(x[i*batch_size:(i+1)*batch_size, 0:x.shape[1]])
+            Ys.append(y[i*batch_size:(i+1)*batch_size, 0:y.shape[1]])
 
-        batch_x = np.array_split(x, len(x) / batch_size)
-        batch_y = np.array_split(y, len(y) / batch_size)
+        return np.array(Xs), np.array(Ys)
 
-        return batch_x, batch_y
+    # def create_batches(self, x, y, batch_size=100):
+    #     perm = np.random.permutation(len(x))
+    #     print('perm value:', perm)
+    #     x = x[perm]
+    #     y = y[perm]
+
+    #     batch_x = np.array_split(x, len(x) / batch_size)
+    #     batch_y = np.array_split(y, len(y) / batch_size)
+
+    #     return batch_x, batch_y
 

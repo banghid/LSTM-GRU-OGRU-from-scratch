@@ -1,3 +1,4 @@
+#image data
 perm value: [21920  1736 17587 ... 44631 10409  4380]
 trainX shape (60000, 28, 28)
 trainY shape (60000, 10)
@@ -6,3 +7,17 @@ testY shape (10000, 10)
 batch_x shape: (600, 100, 28, 28)
 batch_y shape: (600, 100, 10)
 
+#bitcoin data
+trainX shape (3214, 14, 3)
+trainY shape (3214, 1)
+testX shape (794, 14, 3)
+testY shape (794, 1)
+batch_x shape: (32,)
+batch_y shape: (32,)
+
+trainX shape (3214, 14, 3)
+trainY shape (3214, 1)
+testX shape (794, 14, 3)
+testY shape (794, 1)
+batch_x shape: (267,)
+batch_y shape: (267,)

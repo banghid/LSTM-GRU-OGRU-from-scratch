@@ -22,16 +22,25 @@ python train.py --test --hidden_unit 32 --model lstm: Test with stored weights
 '''
 
 # Network Parameters
+'''image data configuration'''
+# seed = 123
+# input_nodes = 28
+# output_nodes = 10
+# learning_rate = 0.005
+# num_iterations = 30
+# batch_size = 100
+
+'''timeseries data configuration'''
 seed = 123
-input_nodes = 28
-output_nodes = 10
+input_nodes = 3
+output_nodes = 1
 learning_rate = 0.005
-num_iterations = 30
-batch_size = 100
-data = data_loader.DataLoader()
+num_iterations = 100
+batch_size = 12
+# data = data_loader.DataLoader()
 weights_folder = '/weights/'
 # timeseries = timeseries_loader.TimeseriesLoader()
-# data = timeseries_loader.TimeseriesLoader()
+data = timeseries_loader.TimeseriesLoader()
 
 # check if needed files are present or not. Downloads if needed.
 def check_download_weights(model, hidden_unit):
@@ -262,7 +271,7 @@ def dataLoaderTest():
     # testX, testY = data.load_data('test')
     # test = (testX, testY)
 
-    batch_x, batch_y = data.create_batches(trainX, trainY, batch_size=batch_size)
+    batch_x, batch_y = data.create_batches(trainX, trainY, batch_size=12)
     size_x = np.array(batch_x)
     size_y = np.array(batch_y)
 
@@ -277,6 +286,7 @@ def dataLoaderTest():
     # print('test shape', test.shape)
     # print('train shape', train.shape)
 
+
 if __name__ == '__main__':
-    # main()
-    dataLoaderTest()
+    main()
+    # dataLoaderTest()
