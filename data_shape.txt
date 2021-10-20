@@ -1,0 +1,8 @@
+perm value: [21920  1736 17587 ... 44631 10409  4380]
+trainX shape (60000, 28, 28)
+trainY shape (60000, 10)
+testX shape (10000, 28, 28)
+testY shape (10000, 10)
+batch_x shape: (600, 100, 28, 28)
+batch_y shape: (600, 100, 10)
+
