@@ -7,6 +7,9 @@ testY shape (10000, 10)
 batch_x shape: (600, 100, 28, 28)
 batch_y shape: (600, 100, 10)
 
+minibatch x: (100, 28, 28)
+minibatch y: (100, 10)
+
 #bitcoin data
 trainX shape (3214, 14, 3)
 trainY shape (3214, 1)
@@ -21,3 +24,6 @@ testX shape (794, 14, 3)
 testY shape (794, 1)
 batch_x shape: (267,)
 batch_y shape: (267,)
+
+minibatch x: (12, 14, 3)
+minibatch y: (12, 1)

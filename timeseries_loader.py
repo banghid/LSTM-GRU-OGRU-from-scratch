@@ -34,6 +34,8 @@ class TimeseriesLoader(object):
         train_scaled = scaler.transform(train_data)
         test_scaled = scaler.transform(test_data)
 
+        print(train_scaled)
+
         trainX, trainY = self.sliding_window(train_scaled)
         testX, testY = self.sliding_window(test_scaled)
 
@@ -52,7 +54,7 @@ class TimeseriesLoader(object):
         Xs = []
         Ys = []
         n = len(x)/batch_size
-        print("n value is:", n)
+        # print("n value is:", n)
         
         for i in range(int(n)):
             Xs.append(x[i*batch_size:(i+1)*batch_size, 0:x.shape[1]])
