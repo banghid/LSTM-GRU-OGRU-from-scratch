@@ -32,7 +32,7 @@ class OGRU_cell(object):
         self.bo = tf.Variable(tf.truncated_normal([self.output_nodes], mean=1, stddev=.01))
 
         self._inputs = tf.placeholder(tf.float32,shape=[None, None, self.input_nodes], name='inputs')
-
+        
         batch_input_ = tf.transpose(self._inputs, perm=[2, 0, 1])
         self.processed_input = tf.transpose(batch_input_)
 

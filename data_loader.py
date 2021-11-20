@@ -33,7 +33,7 @@ class DataLoader(object):
 
     def create_batches(self, x, y, batch_size=100):
         perm = np.random.permutation(len(x))
-        print('perm value:', perm)
+        # print('perm value:', perm)
         x = x[perm]
         y = y[perm]
 

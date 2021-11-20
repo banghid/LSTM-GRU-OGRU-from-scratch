@@ -454,3 +454,74 @@ Iteration 28, Cost: 42.611510457992594, Accuracy: 83.0
 Iteration 29, Cost: 43.136139885584555, Accuracy: 80.0
 Parameters have been trained and saved!
 Train Accuracy: 84.66667
+
+
+ogru adam 32
+Iteration 99, Cost: 0.0013967979550599757, Accuracy: 0.014158114790916443
+Train Accuracy: 0.07690501
+Test Accuracy:0.215
+
+ogru sgd 32
+Iteration 99, Cost: 1.4959544837536732e-05, Accuracy: 0.0032084439881145954
+Train Accuracy: 0.0021312071
+Test Accuracy:0.073
+
+gru adam 32
+Iteration 99, Cost: 0.0013967979550599757, Accuracy: 0.014158114790916443
+Train Accuracy: 0.07690501
+Test Accuracy:0.263
+
+gru sgd 32
+Iteration 99, Cost: 1.4959557142902199e-05, Accuracy: 0.0032084533013403416
+Train Accuracy: 0.0021312055
+Test Accuracy:0.073
+
+lstm adam 32
+Iteration 99, Cost: 0.001396792031913352, Accuracy: 0.014157652854919434
+Train Accuracy: 0.07690463
+Test Accuracy:0.215
+
+lstm sgd 32
+Iteration 99, Cost: 0.0021098240688299475, Accuracy: 0.03966967761516571
+Train Accuracy: 0.044402707
+Test Accuracy:0.262
+
+ogru adam 64
+Iteration 99, Cost: 0.0013967968423617245, Accuracy: 0.014158032834529877
+Train Accuracy: 0.076904945
+Test Accuracy:0.215
+
+ogru sgd 64
+Iteration 99, Cost: 1.57321299403999e-05, Accuracy: 0.002397159580141306
+Train Accuracy: 0.001969579
+Test Accuracy:0.073
+
+ogru sgd 128
+Iteration 99, Cost: 1.5576765364933565e-05, Accuracy: 0.0018694405443966389
+Train Accuracy: 0.0018482162
+Test Accuracy:0.072
+
+ogru adam 128
+Iteration 99, Cost: 0.001396792672478992, Accuracy: 0.014157682657241821
+Train Accuracy: 0.07690467
+Test Accuracy:0.215
+
+ogru adam 256
+Iteration 99, Cost: 0.0013967960903657933, Accuracy: 0.014157973229885101
+Train Accuracy: 0.07690489
+Test Accuracy:0.215
+
+
+
+#########NEW DATASET##########
+
+ogru adam 32 
+Iteration 99, Cost: 0.0013068772415489158, Accuracy: 0.08976070582866669
+Train Accuracy: 0.06148786
+Test Accuracy:nan
+
+ogru sgd 32
+Iteration 99, Cost: 2.473595695573169e-05, Accuracy: 0.006745802238583565
+Train Accuracy: 0.009369227
+Test Accuracy:nan
+

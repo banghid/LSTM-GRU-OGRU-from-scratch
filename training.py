@@ -9,6 +9,8 @@ import requests
 from OGRU import OGRU_cell
 from module import LSTM_cell, GRU_cell
 import timeseries_loader
+import time
+import matplotlib.pyplot as plt
 # from ppretty import ppretty
 
 '''
@@ -39,7 +41,7 @@ data_opt = 'timeseries'
 # num_iterations = 100
 # batch_size = 12
 data = data_loader.DataLoader()
-weights_folder = '/weights/'
+weights_folder = '/weights_training/'
 # timeseries = timeseries_loader.TimeseriesLoader()
 # data = timeseries_loader.TimeseriesLoader()
 
@@ -87,13 +89,20 @@ def start_training(train, test, hidden_unit, model, alpha=learning_rate, isTrain
     outputs = rnn.get_outputs()
     print('Output layer:', outputs)
     print('outputs[-1] :', outputs[-1])
-    prediction = tf.nn.softmax(outputs[-1])
-
+    # prediction = tf.nn.softmax(outputs[-1])
     
     if data_opt == 'image':
-        cost = -tf.reduce_sum(Y * tf.log(prediction))
+        # cost = -tf.reduce_sum(Y * tf.log(prediction))
+        prediction = tf.nn.softmax(outputs[-1])
+        cost = tf.losses.mean_squared_error(Y, prediction)
+        correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(Y, 1))
+        accuracy = (tf.reduce_mean(tf.cast(correct_prediction, tf.float32))) * 100
     elif data_opt == 'timeseries':
-        cost = -tf.reduce_sum(Y * tf.log(prediction))
+        prediction = tf.layers.dense(outputs[-1],1)
+        cost = tf.losses.mean_squared_error(Y, prediction)
+        correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(Y, 1))
+        mae = tf.keras.losses.MeanAbsoluteError()
+        accuracy = mae(Y, prediction)
     saver = tf.train.Saver(max_to_keep=10)
 
     # optimizer = tf.train.GradientDescentOptimizer(alpha).minimize(cost)
@@ -102,8 +111,8 @@ def start_training(train, test, hidden_unit, model, alpha=learning_rate, isTrain
     elif opt == 'adam':
         optimizer = tf.train.AdamOptimizer(learning_rate = alpha).minimize(cost)
     print('First cost :', cost)
-    correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(Y, 1))
-    accuracy = (tf.reduce_mean(tf.cast(correct_prediction, tf.float32))) * 100
+    
+    
 
     init = tf.global_variables_initializer()
     sess = tf.Session()
@@ -115,32 +124,49 @@ def start_training(train, test, hidden_unit, model, alpha=learning_rate, isTrain
 
     if isTrain:
         num_minibatches = len(trainX) / batch_size
+        iteration_time = []
+        training_cost = []
         for iteration in range(num_iterations):
+            start_time = time.time()
             iter_cost = 0.
             batch_x, batch_y = data.create_batches(trainX, trainY, batch_size=batch_size)
             # batch_x, batch_y = train
-            count_minibatch = 0
+
             for (minibatch_X, minibatch_Y) in zip(batch_x, batch_y):
+            
                 _, minibatch_cost, acc = sess.run([optimizer, cost, accuracy], feed_dict={rnn._inputs: minibatch_X, Y: minibatch_Y})
-                iter_cost += minibatch_cost*1.0 / num_minibatches
+                # print('minibatch_cost : {minibatch}, _ : {_value}'.format(minibatch=minibatch_cost, _value=_ ))
+                iter_cost += minibatch_cost*1.0 / num_minibatches                
+
+                # count_minibatch = count_minibatch + 1 
+                # print(count_minibatch)
                 
+            training_cost.append(iter_cost)
+            iteration_time.append(iteration)
 
             print("Iteration {iter_num}, Cost: {cost}, Accuracy: {accuracy}".format(iter_num=iteration, cost=iter_cost, accuracy=acc))
 
         # print ppretty(rnn)
+        plt.plot(iteration_time, training_cost)
+        plt.xlabel('Iteration')
+        plt.ylabel('Cost MSE')
+        plt.show()
         Train_accuracy = str(sess.run(accuracy, feed_dict={rnn._inputs: trainX, Y: trainY}))
+
         # Test_accuracy = str(sess.run(accuracy, feed_dict={rnn._inputs: testX, Y: testY}))
 
-        save_path = saver.save(sess, "." + weights_folder + data_opt + '/' + "model_" + model + "_" + str(hidden_unit) + ".ckpt")
+        save_path = saver.save(sess, "." + weights_folder + data_opt + '/' + "model_" + model + "_" + str(hidden_unit) + "_" + opt + ".ckpt")
         print("Parameters have been trained and saved!")
         print("\rTrain Accuracy: %s" % (Train_accuracy))
+        print("Time taken: %.2fs" % (time.time() - start_time))
 
     else:  # test mode
         # no need to download weights in this assignment
         # check_download_weights(model, hidden_unit)
 
-        saver.restore(sess, "." + weights_folder + data_opt + '/' + "model_" + model + "_" + str(hidden_unit) + ".ckpt")
-        acc = sess.run(accuracy, feed_dict={rnn._inputs: testX, Y: testY})
+        saver.restore(sess, "." + weights_folder + data_opt + '/' + "model_" + model + "_" + str(hidden_unit) + "_" + opt + ".ckpt")
+        acc = np.float64(sess.run(accuracy, feed_dict={rnn._inputs: testX, Y: testY}))
+        print(type(acc))
         print("Test Accuracy:"+"{:.3f}".format(acc))
 
     sess.close()
@@ -156,11 +182,20 @@ def main():
     parser.add_argument('--data', action="store", dest="data", choices=["timeseries","image"], help="Specify data to train")
 
     isTrain_ = False
-    num_iterations_ = num_iterations
     hidden_unit = 32
     model = 'lstm'  # lstm ,gru or ogru
     optimizer = 'sgd'
     args = parser.parse_args()
+
+    if args.data:
+        print("> data training with", args.data)
+        global data_opt
+        data_opt = args.data 
+    
+    train, test = dataLoaderTest(option=data_opt)
+
+    num_iterations_ = num_iterations
+
     if args.hidden_unit:
         print("> hidden unit flag has set value", args.hidden_unit)
         hidden_unit = args.hidden_unit
@@ -179,18 +214,11 @@ def main():
         print("> Now Optimizing with ", args.optimizer)
         optimizer = args.optimizer
 
-    if args.data:
-        print("> data training with", args.data)
-        global data_opt
-        data_opt = args.data
-
     elif args.test:
         print("> Now Testing")
     else:
         print("> Need to provide train / test flag!")
         exit(0)
-
-    train, test = dataLoaderTest(option=data_opt)
 
     print("> Running for", num_iterations_,"iterations")
     print("> Hidden size unit", hidden_unit)
@@ -220,11 +248,13 @@ def dataLoaderTest(option='timeseries'):
         trainX, trainY, testX, testY = data.load_data()
         #set the configuration
         seed = 123
-        input_nodes = 3
+        # input_nodes = 3
+        # after adding new dataset
+        input_nodes = 7
         output_nodes = 1
-        learning_rate = 0.001
+        learning_rate = 0.005
         num_iterations = 100
-        batch_size = 12
+        batch_size = 16
 
     elif option == 'image':
         #load the data
@@ -249,16 +279,16 @@ def dataLoaderTest(option='timeseries'):
     # testX, testY = data.load_data('test')
     # test = (testX, testY)
 
-    batch_x, batch_y = data.create_batches(trainX, trainY, batch_size=batch_size)
-    size_x = np.array(batch_x)
-    size_y = np.array(batch_y)
+    # batch_x, batch_y = data.create_batches(trainX, trainY, batch_size=12)
+    # size_x = np.array(batch_x)
+    # size_y = np.array(batch_y)
 
-    print('trainX shape', trainX.shape)
-    print('trainY shape', trainY.shape)
-    print('testX shape', testX.shape)
-    print('testY shape', testY.shape)
-    print('batch_x shape:', size_x.shape)
-    print('batch_y shape:', size_y.shape)
+    # print('trainX shape', trainX.shape)
+    # print('trainY shape', trainY.shape)
+    # print('testX shape', testX.shape)
+    # print('testY shape', testY.shape)
+    # print('batch_x shape:', size_x.shape)
+    # print('batch_y shape:', size_y.shape)
 
     return train, test
 
